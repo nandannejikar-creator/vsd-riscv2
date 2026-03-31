@@ -1,0 +1,30 @@
+GPIO IP - Task 3 Plan
+
+Register Map:
+0x00 - GPIO_DATA
+0x04 - GPIO_DIR
+0x08 - GPIO_READ
+
+Internal Registers:
+- gpio_data (stores output values)
+- gpio_dir  (stores direction)
+
+Derived Signal:
+- gpio_read (based on dir + input)
+
+Write Operation:
+- addr 0x00 → write gpio_data
+- addr 0x04 → write gpio_dir
+
+Read Operation:
+- addr 0x00 → gpio_data
+- addr 0x04 → gpio_dir
+- addr 0x08 → gpio_read
+
+GPIO Behavior:
+- if dir[i] = 1 → output = data[i]
+- if dir[i] = 0 → input = gpio_in[i]
+
+Reset:
+- gpio_data = 0
+- gpio_dir = 0
