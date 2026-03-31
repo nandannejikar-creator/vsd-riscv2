@@ -1,0 +1,57 @@
+https://glorious-space-cod-r4j6gwxx5g4whppw7.github.dev/
+
+Register Map Description
+
+Offset   Register Name   Description
+------------------------------------
+0x00     GPIO_DATA       Stores output data written by software
+0x04     GPIO_DIR        Controls direction (1 = output, 0 = input)
+0x08     GPIO_READ       Returns actual GPIO pin values
+
+Notes:
+- Each bit corresponds to one GPIO pin
+- Supports 32 GPIO pins
+
+C Code for Validation
+
+#define GPIO_BASE  0x40000000
+
+#define GPIO_DATA  (*(volatile unsigned int *)(GPIO_BASE + 0x00))
+#define GPIO_DIR   (*(volatile unsigned int *)(GPIO_BASE + 0x04))
+#define GPIO_READ  (*(volatile unsigned int *)(GPIO_BASE + 0x08))
+
+int main() {
+    // Set lower 8 bits as output
+    GPIO_DIR = 0x000000FF;
+
+    // Write output data
+    GPIO_DATA = 0xA5A5A5A5;
+
+    // Read back values
+    unsigned int val = GPIO_READ;
+
+    return 0;
+}
+
+The address input is used to select the target register.
+
+- If addr = 0x00 → GPIO_DATA is accessed
+- If addr = 0x04 → GPIO_DIR is accessed
+- If addr = 0x08 → GPIO_READ is accessed
+
+This is implemented using a case statement in RTL, which maps each address to a specific register.
+
+The GPIO_DIR register controls whether each pin is input or output.
+
+- If GPIO_DIR[i] = 1:
+  The pin acts as an output and is driven by GPIO_DATA[i]
+
+- If GPIO_DIR[i] = 0:
+  The pin acts as an input and takes value from gpio_in[i]
+
+The final read value is determined per bit:
+- Output pins return GPIO_DATA
+- Input pins return gpio_in
+
+This ensures correct hardware behavior and avoids driving input pins.
+
